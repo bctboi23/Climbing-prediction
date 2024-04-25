@@ -187,10 +187,10 @@ with st.sidebar:
     new_climber_dict["experience"] = st.number_input("Number of years climbing",value=3)
     new_climber_dict["training experience"] = st.number_input("Number of years training for climbing",value=2)
     new_climber_dict["days"] = st.number_input("Number of days spent climbing outdoors per year", value=50)
-    new_climber_dict["finger strength"] = 1 + (st.number_input("Max additional weight for a 10s hang on a 20mm edge (lbs)", value=150) / new_climber_dict["weight"])
+    new_climber_dict["finger strength"] = 1 + (st.number_input("Max additional weight for a 10s hang on a 20mm edge (lbs)", value=110) / new_climber_dict["weight"])
     new_climber_dict["weighted pull"] = 1 + (st.number_input("Max additional weight for a pullup on a bar (lbs)", value=145) / new_climber_dict["weight"])
     new_climber_dict["ape index"] = st.number_input("Ape index (someone with a height of 6ft and a span of 6'2\" would enter 2)", value=0)
-    new_climber_dict["v grade"] = st.number_input("Current grade or goal grade (V Grade)", value=10, min_value=3, max_value=13)
+    new_climber_dict["v grade"] = st.number_input("Current grade or goal grade (V Grade)", value=8, min_value=3, max_value=13)
 
 # set up our prediction
 val_array = np.array(
