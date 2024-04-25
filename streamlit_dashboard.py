@@ -307,7 +307,7 @@ with col1:
             waterfallgap = 0.1,
     )
     fig.update_layout(margin_b=0)
-    fig.update_layout(margin_l=0)
+    fig.update_layout(margin_l=10)
     fig.update_layout(margin_r=0)
     fig.update_layout(margin_t=0)
     fig.update_layout(height=370)
