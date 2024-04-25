@@ -227,7 +227,7 @@ feature_names = [
 
 
 st.markdown('#### Your metrics')
-col1, col2, col3, col4 = st.columns((1, 1, 3, 3), gap='small')
+col1, col2, col3, col4 = st.columns((1, 1, 4, 4), gap='small')
 
 p_grade = model.predict(val_array)[0]
 v_grade = new_climber_dict["v grade"]
@@ -283,7 +283,7 @@ with col4:
     #st.plotly_chart(gauge_finger, sharing="streamlit", theme="streamlit", **{'config': {'displayModeBar': False}})
     st.plotly_chart(gauge, use_container_width=True, sharing="streamlit", theme="streamlit")
 
-col1, col2 = st.columns((1, 3), gap='small')
+col1, col2 = st.columns((1, 4), gap='small')
 with col1:
     st.markdown("#### Model stats")
     col11, col12, col13 = st.columns((1, 1, 1), gap='small')
