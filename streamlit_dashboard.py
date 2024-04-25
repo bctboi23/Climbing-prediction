@@ -23,15 +23,6 @@ import shap
 
 # helper functions
 
-mpl.rcParams.update(mpl.rcParamsDefault)
-
-mpl.rcParams['text.color'] = 'w'
-mpl.rcParams['axes.labelcolor'] = "w"
-plt.rcParams['axes.facecolor'] = '#0e1117'
-
-mpl.rcParams['xtick.color'] = "w"
-mpl.rcParams['ytick.color'] = "w"
-
 def plot_strip(df, x, y, hue=None, reg_line=False):
     # plot our strip plot
     fig = plt.figure(figsize=(30, 10), facecolor='#0e1117').tight_layout()
@@ -145,6 +136,18 @@ st.set_page_config(
     page_icon="🧗",
     layout="wide",
     initial_sidebar_state="expanded")
+
+# removes some whitespace
+st.markdown("""
+        <style>
+               .block-container {
+                    padding-top: 1rem;
+                    padding-bottom: 0rem;
+                    padding-left: 5rem;
+                    padding-right: 5rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
 
 alt.themes.enable("dark")
 
