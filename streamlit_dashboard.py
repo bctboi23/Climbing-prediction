@@ -222,8 +222,8 @@ feature_names = [
 ]
 
 
-with st.container() as c1:
-    st.markdown('### Your metrics')
+
+st.markdown('#### Your metrics')
 col1, col2, col3, col4 = st.columns((1, 1, 3, 3), gap='small')
 
 p_grade = model.predict(val_array)[0]
