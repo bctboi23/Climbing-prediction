@@ -312,9 +312,9 @@ with col1:
     st.plotly_chart(fig, use_container_width=True)
 
 with col2:
-    st.markdown("#### Data explorlation")
     col11, col12 = st.columns((1, 1), gap='small')
     with col11:
+        st.markdown("#### Grade vs finger strength")
         fig = px.scatter(bouldering_jitter, x="V Grade", y="Weighted hang ratio", color="years climbing", trendline="ols")
         fig.update_layout(margin_b=0)
         fig.update_layout(margin_l=0)
@@ -323,6 +323,7 @@ with col2:
         fig.update_layout(height=550)
         st.plotly_chart(fig, use_container_width=True)
     with col12:
+        st.markdown("#### Grade vs pull strength")
         fig = px.scatter(bouldering_jitter, x="V Grade", y="Weighted pull ratio", color="sex", trendline="ols")
         fig.update_layout(margin_b=0)
         fig.update_layout(margin_l=0)
