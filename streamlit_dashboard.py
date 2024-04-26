@@ -168,6 +168,11 @@ sex_dict_map = {
     "Other": 0.5
 }
 
+sex_dict_map_display = {
+    "Male": 0.0,
+    "Female": 1.0,
+}
+
 similarity_feature_list = [
     "age",
     "days outdoors yearly",
@@ -247,7 +252,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 similarity = (cosine_similarity(scaled, scaled_features).reshape(-1) + 1) / 2 * 100
 bouldering_clean_no_na.insert(0, 'similarity', similarity)
 bouldering_similarity_display = bouldering_clean_no_na.sort_values(by=['similarity'], ascending=False)
-bouldering_similarity_display["sex"] = bouldering_similarity_display["sex"].replace([0, 0.5, 1], sex_dict_map)
+bouldering_similarity_display["sex"] = bouldering_similarity_display["sex"].replace([0, 1], sex_dict_map_display)
 
 with col1:
     metric = plot_prediction(v_grade, p_grade, "Entered Grade")
