@@ -173,18 +173,6 @@ sex_dict_map_display = {
     "Female": 1.0,
 }
 
-similarity_feature_list = [
-    "age",
-    "days outdoors yearly",
-    "sex",
-    "height",
-    "weight",
-    "years climbing",
-    "years training",
-    "Weighted hang ratio",
-    "Weighted pull ratio",
-    "ape index"
-]
 
 with st.sidebar:
     st.title('🧗 Bouldering Grade Prediction Dashboard')
@@ -204,7 +192,19 @@ with st.sidebar:
 val_array = np.array(
     [
         new_climber_dict["age"],
-        new_climber_dict["days"],
+        np.log(new_climber_dict["days"]), # feature transformation
+        new_climber_dict["experience"],
+        new_climber_dict["training experience"],
+        new_climber_dict["finger strength"],
+        new_climber_dict["weighted pull"],
+        new_climber_dict["ape index"]
+    ]
+).reshape(1, -1)
+
+similarity_array = np.array(
+    [
+        new_climber_dict["age"],
+        np.log(new_climber_dict["days"]), # feature transformation
         new_climber_dict["sex"],
         new_climber_dict["height"],
         new_climber_dict["weight"],
@@ -216,12 +216,22 @@ val_array = np.array(
     ]
 ).reshape(1, -1)
 
-feature_names = [
+similarity_feature_list = [
     "age",
-    "days outside",
+    "days outdoors yearly",
     "sex",
     "height",
     "weight",
+    "years climbing",
+    "years training",
+    "Weighted hang ratio",
+    "Weighted pull ratio",
+    "ape index"
+]
+
+feature_names = [
+    "age",
+    "days outside",
     "climbing experience",
     "training experience",
     "finger strength",
@@ -243,15 +253,19 @@ scaled = model[0].transform(val_array)
 shap_vals = explainer.shap_values(scaled).tolist()[0]
 shap_vals, feature_names = zip(*sorted(zip(shap_vals, feature_names)))
 
+scaler = StandardScaler()
 bouldering_clean_no_na = bouldering_clean.dropna().drop(columns=["span", "# pullups", "# pushups"])
-scaled_features = model[0].transform(bouldering_clean_no_na[similarity_feature_list].values)
+bouldering_clean_no_na["days outdoors yearly"] = np.log(bouldering_clean_no_na["days outdoors yearly"])
+scaled_features = scaler.fit_transform(bouldering_clean_no_na[similarity_feature_list].values)
+scaled_climber = scaler.transform(similarity_array)
 if 'similarity' in bouldering_clean_no_na.columns:
     bouldering_clean_no_na.pop('similarity')
 
 from sklearn.metrics.pairwise import cosine_similarity
-similarity = (cosine_similarity(scaled, scaled_features).reshape(-1) + 1) / 2 * 100
+similarity = (cosine_similarity(scaled_climber, scaled_features).reshape(-1) + 1) / 2 * 100
 bouldering_clean_no_na.insert(0, 'similarity', similarity)
 bouldering_similarity_display = bouldering_clean_no_na.sort_values(by=['similarity'], ascending=False)
+bouldering_similarity_display["days outdoors yearly"] = np.round(np.exp(bouldering_clean_no_na["days outdoors yearly"])) # retranslate for display purposes
 bouldering_similarity_display["sex"] = bouldering_similarity_display["sex"].replace([0, 1], sex_dict_map_display)
 
 with col1:
@@ -291,11 +305,11 @@ with col1:
     st.markdown("#### Model stats")
     col11, col12, col13 = st.columns((1, 1, 1), gap='small')
     with col11:
-        st.metric("Root Mean Squared Error", 1.4723)
+        st.metric("Root Mean Squared Error", 1.4459)
     with col12:
-        st.metric("Mean Absolute Error", 1.1891)
+        st.metric("Mean Absolute Error", 1.1627)
     with col13:
-        st.metric("Adjusted R^2", 0.6041)
+        st.metric("Adjusted R^2", 0.6214)
     fig = go.Figure(go.Waterfall(
         name = "20", orientation = "h",
         measure = ["relative" for x in range(len(feature_names))],
