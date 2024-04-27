@@ -191,6 +191,7 @@ with st.sidebar:
 # set up our prediction
 val_array = np.array(
     [
+        new_climber_dict["sex"],
         new_climber_dict["age"],
         np.log(new_climber_dict["days"]), # feature transformation
         new_climber_dict["experience"],
@@ -230,6 +231,7 @@ similarity_feature_list = [
 ]
 
 feature_names = [
+    "sex",
     "age",
     "days outside",
     "climbing experience",
@@ -302,14 +304,14 @@ with col4:
 
 col1, col2 = st.columns((1, 3.5), gap='small')
 with col1:
-    st.markdown("#### Model stats")
+    st.markdown("#### Model Test Set Statistics")
     col11, col12, col13 = st.columns((1, 1, 1), gap='small')
     with col11:
-        st.metric("Root Mean Squared Error", 1.4459)
+        st.metric("RMSE", 1.4888)
     with col12:
-        st.metric("Mean Absolute Error", 1.1627)
+        st.metric("MAE", 1.1584)
     with col13:
-        st.metric("Adjusted R^2", 0.6214)
+        st.metric("R^2", 0.6094)
     fig = go.Figure(go.Waterfall(
         name = "20", orientation = "h",
         measure = ["relative" for x in range(len(feature_names))],
