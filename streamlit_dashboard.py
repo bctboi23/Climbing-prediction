@@ -182,7 +182,7 @@ with st.sidebar:
     new_climber_dict["weight"] = st.number_input("Weight (lbs)", value=165)
     new_climber_dict["experience"] = st.number_input("Number of years climbing",value=8)
     new_climber_dict["training experience"] = st.number_input("Number of years training for climbing",value=3)
-    new_climber_dict["days"] = st.number_input("Number of days spent climbing outdoors per year", value=75)
+    new_climber_dict["days"] = st.number_input("Number of days climbing outdoors per month", value=6)
     new_climber_dict["finger strength"] = 1 + (st.number_input("Max additional weight for a 10s hang on a 20mm edge (lbs)", value=65) / new_climber_dict["weight"])
     new_climber_dict["weighted pull"] = 1 + (st.number_input("Max additional weight for a pullup on a bar (lbs)", value=105) / new_climber_dict["weight"])
     new_climber_dict["ape index"] = st.number_input("Ape index (someone with a height of 6ft and a span of 6'2\" would enter 2)", value=2)
@@ -192,8 +192,10 @@ with st.sidebar:
 val_array = np.array(
     [
         new_climber_dict["sex"],
+        new_climber_dict["height"],
+        new_climber_dict["weight"],
         new_climber_dict["age"],
-        np.log(new_climber_dict["days"]), # feature transformation
+        new_climber_dict["days"],
         new_climber_dict["experience"],
         new_climber_dict["training experience"],
         new_climber_dict["finger strength"],
@@ -205,7 +207,7 @@ val_array = np.array(
 similarity_array = np.array(
     [
         new_climber_dict["age"],
-        np.log(new_climber_dict["days"]), # feature transformation
+        new_climber_dict["days"],
         new_climber_dict["sex"],
         new_climber_dict["height"],
         new_climber_dict["weight"],
@@ -217,9 +219,11 @@ similarity_array = np.array(
     ]
 ).reshape(1, -1)
 
+
+
 similarity_feature_list = [
     "age",
-    "days outdoors yearly",
+    "days outdoors",
     "sex",
     "height",
     "weight",
@@ -232,6 +236,8 @@ similarity_feature_list = [
 
 feature_names = [
     "sex",
+    "height",
+    "weight",
     "age",
     "days outside",
     "climbing experience",
@@ -257,7 +263,6 @@ shap_vals, feature_names = zip(*sorted(zip(shap_vals, feature_names)))
 
 scaler = StandardScaler()
 bouldering_clean_no_na = bouldering_clean.dropna().drop(columns=["span", "# pullups", "# pushups"])
-bouldering_clean_no_na["days outdoors yearly"] = np.log(bouldering_clean_no_na["days outdoors yearly"])
 scaled_features = scaler.fit_transform(bouldering_clean_no_na[similarity_feature_list].values)
 scaled_climber = scaler.transform(similarity_array)
 if 'similarity' in bouldering_clean_no_na.columns:
@@ -267,7 +272,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 similarity = (cosine_similarity(scaled_climber, scaled_features).reshape(-1) + 1) / 2 * 100
 bouldering_clean_no_na.insert(0, 'similarity', similarity)
 bouldering_similarity_display = bouldering_clean_no_na.sort_values(by=['similarity'], ascending=False)
-bouldering_similarity_display["days outdoors yearly"] = np.round(np.exp(bouldering_clean_no_na["days outdoors yearly"])) # retranslate for display purposes
 bouldering_similarity_display["sex"] = bouldering_similarity_display["sex"].replace([0, 1], sex_dict_map_display)
 
 with col1:
@@ -307,11 +311,11 @@ with col1:
     st.markdown("#### Model Test Set Statistics")
     col11, col12, col13 = st.columns((1, 1, 1), gap='small')
     with col11:
-        st.metric("RMSE", 1.4888)
+        st.metric("RMSE", 1.4835)
     with col12:
-        st.metric("MAE", 1.1584)
+        st.metric("MAE", 1.2113)
     with col13:
-        st.metric("R^2", 0.6094)
+        st.metric("R^2", 0.6043)
     fig = go.Figure(go.Waterfall(
         name = "20", orientation = "h",
         measure = ["relative" for x in range(len(feature_names))],
@@ -371,9 +375,9 @@ with col1:
                 "grade",
                 format="V%d",
             ),
-            "days outdoors yearly": st.column_config.NumberColumn(
+            "days outdoors": st.column_config.NumberColumn(
                 "outdoor time",
-                format="%d days / yr",
+                format="%d days / month",
             ),
         },
         hide_index=True,
@@ -393,9 +397,9 @@ with col2:
                 "grade",
                 format="V%d",
             ),
-            "days outdoors yearly": st.column_config.NumberColumn(
+            "days outdoors": st.column_config.NumberColumn(
                 "outdoor time",
-                format="%d days / yr",
+                format="%d days / month",
             )
         },
         hide_index=True,
