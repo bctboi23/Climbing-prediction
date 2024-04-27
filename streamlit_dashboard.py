@@ -308,7 +308,7 @@ with col4:
 
 col1, col2 = st.columns((1, 3.5), gap='small')
 with col1:
-    st.markdown("#### Model Test Set Statistics")
+    st.markdown("#### Model metrics (on hold out set)")
     col11, col12, col13 = st.columns((1, 1, 1), gap='small')
     with col11:
         st.metric("RMSE", 1.4835)
