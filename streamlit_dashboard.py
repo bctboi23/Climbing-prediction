@@ -151,10 +151,16 @@ st.markdown("""
 
 alt.themes.enable("dark")
 
+categorical_cols = [
+    "sex",
+    "V Grade"
+]
+
 bouldering_clean = pd.read_csv('clean_dataset.csv')
 bouldering_jitter = bouldering_clean.copy()
 np.random.seed(42)
-bouldering_jitter["V Grade"] = bouldering_jitter["V Grade"] + np.random.rand(len(bouldering_jitter["V Grade"])) * 0.25 - 0.125
+for col in categorical_cols:
+    bouldering_jitter[col] = bouldering_jitter[col] + np.random.rand(len(bouldering_jitter[col])) * 0.25 - 0.125
 
 # load
 with open('model.pkl', 'rb') as f:
@@ -218,8 +224,6 @@ similarity_array = np.array(
         new_climber_dict["ape index"]
     ]
 ).reshape(1, -1)
-
-
 
 similarity_feature_list = [
     "age",
@@ -333,30 +337,37 @@ with col1:
     fig.update_layout(margin_l=0)
     fig.update_layout(margin_r=0)
     fig.update_layout(margin_t=0)
-    fig.update_layout(height=370)
+    fig.update_layout(height=425)
     st.markdown("#### Model variable influence")
     st.plotly_chart(fig, use_container_width=True)
 
 with col2:
-    col11, col12 = st.columns((1, 1), gap='small')
+    st.markdown("#### Data exploration")
+    col11, col12, col13, col14 = st.columns((1, 1, 1, 1), gap='medium')
+    axis_list = list(bouldering_jitter.columns)
+    color_list = [None] + list(bouldering_jitter.columns)
     with col11:
-        st.markdown("#### Grade vs finger strength")
-        fig = px.scatter(bouldering_jitter, x="V Grade", y="Weighted hang ratio", color="years climbing", trendline="ols")
-        fig.update_layout(margin_b=0)
-        fig.update_layout(margin_l=0)
-        fig.update_layout(margin_r=0)
-        fig.update_layout(margin_t=0)
-        fig.update_layout(height=550)
-        st.plotly_chart(fig, use_container_width=True)
+        x_axis = st.selectbox("X axis", axis_list, index = 0)
+        axis_list.remove(x_axis)
     with col12:
-        st.markdown("#### Grade vs pull strength")
-        fig = px.scatter(bouldering_jitter, x="V Grade", y="Weighted pull ratio", color="sex", trendline="ols")
-        fig.update_layout(margin_b=0)
-        fig.update_layout(margin_l=0)
-        fig.update_layout(margin_r=0)
-        fig.update_layout(margin_t=0)
-        fig.update_layout(height=550)
-        st.plotly_chart(fig, use_container_width=True)
+        y_axis = st.selectbox("Y axis", axis_list, index = 11)
+    with col13:
+        color = st.selectbox("Color", color_list, index = 2)
+    with col14:
+        st.write('<div style="height: 35px;">Plot Regression Line</div>', unsafe_allow_html=True)
+        reg_line = st.toggle("Plot Regression Line", label_visibility="collapsed", value=True)
+    if reg_line:
+        plot_trend="ols"
+    else:
+        plot_trend=None
+
+    fig = px.scatter(bouldering_jitter, x=x_axis, y=y_axis, color=color, trendline=plot_trend)
+    fig.update_layout(margin_b=0)
+    fig.update_layout(margin_l=0)
+    fig.update_layout(margin_r=0)
+    fig.update_layout(margin_t=0)
+    fig.update_layout(height=500)
+    st.plotly_chart(fig, use_container_width=True)
 
 
 col1, col2 = st.columns((1, 1), gap='small')
