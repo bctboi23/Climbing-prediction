@@ -277,6 +277,8 @@ similarity = (cosine_similarity(scaled_climber, scaled_features).reshape(-1) + 1
 bouldering_clean_no_na.insert(0, 'similarity', similarity)
 bouldering_similarity_display = bouldering_clean_no_na.sort_values(by=['similarity'], ascending=False)
 bouldering_similarity_display["sex"] = bouldering_similarity_display["sex"].replace([0, 1], sex_dict_map_display)
+bouldering_similarity_display["Weighted hang ratio"] *= 100
+bouldering_similarity_display["Weighted pull ratio"] *= 100
 
 with col1:
     metric = plot_prediction(v_grade, p_grade, "Entered Grade")
@@ -390,6 +392,24 @@ with col1:
                 "outdoor time",
                 format="%d days / month",
             ),
+            "height": st.column_config.NumberColumn(
+                format="%d in.",
+            ),
+            "weight": st.column_config.NumberColumn(
+                format="%d lbs.",
+            ),
+            "days outdoors": st.column_config.NumberColumn(
+                "outdoor time",
+                format="%d days / month",
+            ),
+            "Weighted hang ratio": st.column_config.NumberColumn(
+                "Weighted hang",
+                format="%d%% BW",
+            ),
+            "Weighted pull ratio": st.column_config.NumberColumn(
+                "Weighted pull",
+                format="%d%% BW",
+            )
         },
         hide_index=True,
         use_container_width=True)
@@ -411,6 +431,24 @@ with col2:
             "days outdoors": st.column_config.NumberColumn(
                 "outdoor time",
                 format="%d days / month",
+            ),
+            "height": st.column_config.NumberColumn(
+                format="%d in.",
+            ),
+            "weight": st.column_config.NumberColumn(
+                format="%d lbs.",
+            ),
+            "days outdoors": st.column_config.NumberColumn(
+                "outdoor time",
+                format="%d days / month",
+            ),
+            "Weighted hang ratio": st.column_config.NumberColumn(
+                "Weighted hang",
+                format="%d%% BW",
+            ),
+            "Weighted pull ratio": st.column_config.NumberColumn(
+                "Weighted pull",
+                format="%d%% BW",
             )
         },
         hide_index=True,
