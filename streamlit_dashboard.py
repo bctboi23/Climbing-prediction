@@ -261,6 +261,21 @@ feature_names = [
     "ape index"
 ]
 
+column_display_order = [
+    "V Grade", 
+    "similarity",
+    "age", 
+    "sex", 
+    "height", 
+    "weight", 
+    "ape index", 
+    "Weighted hang ratio",
+    "Weighted pull ratio",
+    "years climbing",
+    "years training",
+    "days outdoors"
+]
+
 st.markdown('#### Your metrics')
 col1, col2, col3, col4 = st.columns((1, 1, 3.5, 3.5), gap='small')
 
@@ -387,12 +402,13 @@ with col1:
     st.markdown(f"#### Most similar climbers")
     st.dataframe(
         bouldering_similarity_display.head(10), 
+        column_order=column_display_order,
         column_config={
             "similarity": st.column_config.ProgressColumn(
                 "similarity",
                 format="%.1f%%",
                 min_value=0,
-                max_value=100
+                max_value=100,
             ),
             "V Grade": st.column_config.NumberColumn(
                 "grade",
@@ -427,16 +443,13 @@ with col2:
     st.markdown(f"#### Most similar V{v_grade} climbers")
     st.dataframe(
         bouldering_similarity_display[bouldering_similarity_display["V Grade"] == v_grade].head(10), 
+        column_order=column_display_order[1:],
         column_config={
             "similarity": st.column_config.ProgressColumn(
                 "similarity",
                 format="%.1f%%",
                 min_value=0,
                 max_value=100
-            ),
-            "V Grade": st.column_config.NumberColumn(
-                "grade",
-                format="V%d",
             ),
             "days outdoors": st.column_config.NumberColumn(
                 "outdoor time",
