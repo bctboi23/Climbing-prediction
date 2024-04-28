@@ -179,6 +179,16 @@ sex_dict_map_display = {
     "Female": 1.0,
 }
 
+st.markdown(
+    """
+    <style>
+    [data-testid="stElementToolbar"] {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 with st.sidebar:
     st.title('🧗 Bouldering Grade Prediction Dashboard')
@@ -376,7 +386,7 @@ col1, col2 = st.columns((1, 1), gap='small')
 with col1:
     st.markdown(f"#### Most similar climbers")
     st.dataframe(
-        bouldering_similarity_display.head(20), 
+        bouldering_similarity_display.head(10), 
         column_config={
             "similarity": st.column_config.ProgressColumn(
                 "similarity",
@@ -416,7 +426,7 @@ with col1:
 with col2:
     st.markdown(f"#### Most similar V{v_grade} climbers")
     st.dataframe(
-        bouldering_similarity_display[bouldering_similarity_display["V Grade"] == v_grade].head(20), 
+        bouldering_similarity_display[bouldering_similarity_display["V Grade"] == v_grade].head(10), 
         column_config={
             "similarity": st.column_config.ProgressColumn(
                 "similarity",
