@@ -159,6 +159,8 @@ categorical_cols = [
 ]
 
 bouldering_clean = pd.read_csv('clean_dataset.csv')
+residual_data = pd.read_csv('residual_data.csv')
+residual_data["residual error"] = residual_data["actual y"] - residual_data["predicted y"]
 bouldering_jitter = bouldering_clean.copy()
 np.random.seed(42)
 for col in categorical_cols:
@@ -366,8 +368,22 @@ with col1:
     fig.update_layout(margin_l=0)
     fig.update_layout(margin_r=0)
     fig.update_layout(margin_t=0)
-    fig.update_layout(height=425)
+    fig.update_layout(height=300)
     st.markdown("#### Model variable influence")
+    st.plotly_chart(fig, use_container_width=True, config = config)
+
+    st.markdown("#### Model Residuals")
+    fig = px.scatter(
+        residual_data, x='predicted y', y='residual error',
+        marginal_y='violin',
+        color='actual y',
+        trendline='ols',
+        trendline_color_override='#0068c9'
+    )
+    fig.update_layout(margin_b=0)
+    fig.update_layout(margin_l=0)
+    fig.update_layout(margin_r=0)
+    fig.update_layout(margin_t=0)
     st.plotly_chart(fig, use_container_width=True, config = config)
 
 with col2:
@@ -398,9 +414,8 @@ with col2:
     fig.update_layout(height=500)
     st.plotly_chart(fig, use_container_width=True, config = config)
 
+    # similarity chart
 
-col1, col2 = st.columns((1, 1), gap='small')
-with col1:
     st.markdown(f"#### Most similar climbers")
     st.dataframe(
         bouldering_similarity_display.head(10), 
@@ -440,41 +455,5 @@ with col1:
             )
         },
         hide_index=True,
-        use_container_width=True)
-with col2:
-    st.markdown(f"#### Most similar V{v_grade} climbers")
-    st.dataframe(
-        bouldering_similarity_display[bouldering_similarity_display["V Grade"] == v_grade].head(10), 
-        column_order=column_display_order[1:],
-        column_config={
-            "similarity": st.column_config.ProgressColumn(
-                "similarity",
-                format="%.1f%%",
-                min_value=0,
-                max_value=100
-            ),
-            "days outdoors": st.column_config.NumberColumn(
-                "outdoor time",
-                format="%d days / month",
-            ),
-            "height": st.column_config.NumberColumn(
-                format="%d in.",
-            ),
-            "weight": st.column_config.NumberColumn(
-                format="%d lbs.",
-            ),
-            "days outdoors": st.column_config.NumberColumn(
-                "outdoor time",
-                format="%d days / month",
-            ),
-            "Weighted hang ratio": st.column_config.NumberColumn(
-                "Weighted hang",
-                format="%d%% BW",
-            ),
-            "Weighted pull ratio": st.column_config.NumberColumn(
-                "Weighted pull",
-                format="%d%% BW",
-            )
-        },
-        hide_index=True,
-        use_container_width=True)
+        use_container_width=True,
+        height=275)
