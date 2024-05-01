@@ -21,6 +21,8 @@ from sklearn.pipeline import Pipeline
 
 import shap
 
+config = {'displayModeBar': False}
+
 # helper functions
 
 def plot_strip(df, x, y, hue=None, reg_line=False):
@@ -196,10 +198,10 @@ with st.sidebar:
     new_climber_dict["age"] = st.number_input("Age", value=22)
     new_climber_dict["height"] = st.number_input("Height in inches (6ft = 72in)", value=70)
     new_climber_dict["weight"] = st.number_input("Weight (lbs)", value=165)
-    new_climber_dict["experience"] = st.number_input("Number of years climbing",value=8)
-    new_climber_dict["training experience"] = st.number_input("Number of years training for climbing",value=3)
-    new_climber_dict["days"] = st.number_input("Number of days climbing outdoors per month", value=6)
-    new_climber_dict["finger strength"] = 1 + (st.number_input("Max additional weight for a 10s hang on a 20mm edge (lbs)", value=65) / new_climber_dict["weight"])
+    new_climber_dict["experience"] = st.number_input("Number of years climbing",value=9)
+    new_climber_dict["training experience"] = st.number_input("Number of years training for climbing",value=1)
+    new_climber_dict["days"] = st.number_input("Number of days climbing outdoors per month", value=12)
+    new_climber_dict["finger strength"] = 1 + (st.number_input("Max additional weight for a 10s hang on a 20mm edge (lbs)", value=55) / new_climber_dict["weight"])
     new_climber_dict["weighted pull"] = 1 + (st.number_input("Max additional weight for a pullup on a bar (lbs)", value=105) / new_climber_dict["weight"])
     new_climber_dict["ape index"] = st.number_input("Ape index (someone with a height of 6ft and a span of 6'2\" would enter 2)", value=2)
     new_climber_dict["v grade"] = st.number_input("Current grade or goal grade (V Grade)", value=8, min_value=3, max_value=13)
@@ -309,14 +311,14 @@ with col1:
     metric = plot_prediction(v_grade, p_grade, "Entered Grade")
     
     #st.plotly_chart(gauge_finger, sharing="streamlit", theme="streamlit", **{'config': {'displayModeBar': False}})
-    st.plotly_chart(metric, use_container_width=True, sharing="streamlit", theme="streamlit")
+    st.plotly_chart(metric, use_container_width=True, sharing="streamlit", theme="streamlit", config = config)
 
 with col2:
     #st.metric("Predicted V Grade", f"{p_grade:.0f}")
     metric = plot_prediction(p_grade, v_grade, "Predicted Grade", delta=True)
     
     #st.plotly_chart(gauge_finger, sharing="streamlit", theme="streamlit", **{'config': {'displayModeBar': False}})
-    st.plotly_chart(metric, use_container_width=True, sharing="streamlit", theme="streamlit")
+    st.plotly_chart(metric, use_container_width=True, sharing="streamlit", theme="streamlit", config = config)
 
 with col3:
     f_strength = new_climber_dict["finger strength"] * 100
@@ -326,7 +328,7 @@ with col3:
     
     
     #st.plotly_chart(gauge_finger, sharing="streamlit", theme="streamlit", **{'config': {'displayModeBar': False}})
-    st.plotly_chart(gauge, use_container_width=True, sharing="streamlit", theme="streamlit")
+    st.plotly_chart(gauge, use_container_width=True, sharing="streamlit", theme="streamlit", config = config)
 
 with col4:
     p_strength = new_climber_dict["weighted pull"] * 100
@@ -335,7 +337,7 @@ with col4:
     gauge = plot_gauge(p_strength, pull_median, v_grade, "Weighted Pull (% BW)")
     
     #st.plotly_chart(gauge_finger, sharing="streamlit", theme="streamlit", **{'config': {'displayModeBar': False}})
-    st.plotly_chart(gauge, use_container_width=True, sharing="streamlit", theme="streamlit")
+    st.plotly_chart(gauge, use_container_width=True, sharing="streamlit", theme="streamlit", config = config)
 
 col1, col2 = st.columns((1, 3.5), gap='small')
 with col1:
@@ -366,7 +368,7 @@ with col1:
     fig.update_layout(margin_t=0)
     fig.update_layout(height=425)
     st.markdown("#### Model variable influence")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config = config)
 
 with col2:
     st.markdown("#### Data exploration")
@@ -394,7 +396,7 @@ with col2:
     fig.update_layout(margin_r=0)
     fig.update_layout(margin_t=0)
     fig.update_layout(height=500)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config = config)
 
 
 col1, col2 = st.columns((1, 1), gap='small')
