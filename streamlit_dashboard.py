@@ -418,7 +418,7 @@ with col2:
 
     st.markdown(f"#### Most similar climbers")
     st.dataframe(
-        bouldering_similarity_display.head(10), 
+        bouldering_similarity_display.head(15), 
         column_order=column_display_order,
         column_config={
             "similarity": st.column_config.ProgressColumn(
@@ -456,4 +456,4 @@ with col2:
         },
         hide_index=True,
         use_container_width=True,
-        height=275)
+        height=315)
