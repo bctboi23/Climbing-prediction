@@ -384,6 +384,7 @@ with col1:
     fig.update_layout(margin_l=0)
     fig.update_layout(margin_r=0)
     fig.update_layout(margin_t=0)
+    fig.update_yaxes(range=[min(residual_data["residual error"]) - 0.1, max(residual_data["residual error"]) + 0.1])
     st.plotly_chart(fig, use_container_width=True, config = config)
 
 with col2:
