@@ -416,13 +416,13 @@ with col2:
 
     # similarity chart
 
-    st.markdown(f"#### Most similar climbers")
+    st.markdown(f"#### Your similar climbers")
     st.dataframe(
         bouldering_similarity_display.head(15), 
         column_order=column_display_order,
         column_config={
             "similarity": st.column_config.ProgressColumn(
-                "similarity",
+                "similarity score",
                 format="%.1f%%",
                 min_value=0,
                 max_value=100,
