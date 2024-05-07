@@ -211,7 +211,6 @@ with st.sidebar:
 # set up our prediction
 val_array = np.array(
     [
-        new_climber_dict["sex"],
         new_climber_dict["height"],
         new_climber_dict["weight"],
         new_climber_dict["age"],
@@ -253,7 +252,6 @@ similarity_feature_list = [
 ]
 
 feature_names = [
-    "sex",
     "height",
     "weight",
     "age",
@@ -298,6 +296,7 @@ scaler = StandardScaler()
 bouldering_clean_no_na = bouldering_clean.dropna().drop(columns=["span", "# pullups", "# pushups"])
 scaled_features = scaler.fit_transform(bouldering_clean_no_na[similarity_feature_list].values)
 scaled_climber = scaler.transform(similarity_array)
+
 if 'similarity' in bouldering_clean_no_na.columns:
     bouldering_clean_no_na.pop('similarity')
 
@@ -346,11 +345,11 @@ with col1:
     st.markdown("#### Model metrics")
     col11, col12, col13 = st.columns((1, 1, 1), gap='small')
     with col11:
-        st.metric("Test RMSE", 1.4643)
+        st.metric("Test RMSE", 1.4681)
     with col12:
-        st.metric("Test MAE", 1.1986)
+        st.metric("Test MAE", 1.2008)
     with col13:
-        st.metric("Test R^2", 0.6175)
+        st.metric("Test R^2", 0.6155)
     fig = go.Figure(go.Waterfall(
         name = "20", orientation = "h",
         measure = ["relative" for x in range(len(feature_names))],
