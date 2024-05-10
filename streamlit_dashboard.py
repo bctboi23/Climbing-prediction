@@ -345,11 +345,11 @@ with col1:
     st.markdown("#### Model metrics")
     col11, col12, col13 = st.columns((1, 1, 1), gap='small')
     with col11:
-        st.metric("Test RMSE", 1.4681)
+        st.metric("Test RMSE", 1.4757)
     with col12:
-        st.metric("Test MAE", 1.2008)
+        st.metric("Test MAE", 1.1787)
     with col13:
-        st.metric("Test R^2", 0.6155)
+        st.metric("Test R^2", 0.6013)
     fig = go.Figure(go.Waterfall(
         name = "20", orientation = "h",
         measure = ["relative" for x in range(len(feature_names))],
