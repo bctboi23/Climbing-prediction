@@ -342,7 +342,7 @@ with col1:
     st.markdown("#### Model metrics")
     col11, col12, col13 = st.columns((1, 1, 1), gap='small')
     with col11:
-        st.metric("Test RMSE", 1.4460)
+        st.metric("Test RMSE", 1.4461)
     with col12:
         st.metric("Test MAE", 1.1967)
     with col13:
