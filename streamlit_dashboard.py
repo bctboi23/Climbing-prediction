@@ -375,9 +375,7 @@ with col1:
     fig = px.scatter(
         residual_data, x='predicted y', y='residual error',
         marginal_y='violin',
-        color='actual y',
-        trendline='ols',
-        trendline_color_override='#0068c9'
+        color='actual y'
     )
     fig.update_layout(margin_b=0)
     fig.update_layout(margin_l=0)
