@@ -43,22 +43,19 @@ def plot_strip(df, x, y, hue=None, reg_line=False):
     return fig
 
 def plot_gauge(val, ref_val, grade, title):
-    cmap = LinearSegmentedColormap.from_list('rg',["firebrick", "goldenrod", "seagreen"], N=50) 
-    color_list = [mcolors.rgb2hex(cmap(i)) for i in range(cmap.N)]
     
     delta_suff = ""
     gauge_pref = ""
     val = np.round(val)
     ref_val = np.round(ref_val)
-    if ref_val - val > 25:
-        gauge_pref = "<"
-        delta_suff = "<"
-    if ref_val - val < -25:
-        gauge_pref = ">"
-        delta_suff = ">"
+    upper_bound = max(val, 25 + ref_val)
+    lower_bound = min(val, ref_val - 25)
+
+    cmap = LinearSegmentedColormap.from_list('rg',["firebrick", "goldenrod", "seagreen"], N=50) 
+    color_list = [mcolors.rgb2hex(cmap(i)) for i in range(cmap.N)]
         
-    val = np.clip(val, ref_val - 25, ref_val + 25)
-    color = color_list[int(val - ref_val + 25 - 1)]
+    color_val = np.clip(val, ref_val - 25, ref_val + 25)
+    color = color_list[int(color_val - ref_val + 25 - 1)]
         
     fig = go.Figure(go.Indicator(
         domain = {'x': [0, 1], 'y': [0.25, 1]},
@@ -67,11 +64,11 @@ def plot_gauge(val, ref_val, grade, title):
         delta = {'reference': ref_val, 'prefix': delta_suff, 'suffix': "%"},
         number = { 'suffix': "%", 'prefix': gauge_pref},
         gauge = {'shape': 'bullet',
-                'axis': {'range': [-25 + ref_val, 25 + ref_val]},
+                'axis': {'range': [lower_bound, upper_bound]},
                  'bar': {'color': color, 'thickness': 1},
                  'borderwidth': 0,
                  'steps' : [
-                     {'range': [-25 + ref_val, 25 + ref_val], 'color': "#2f2f2f",},],
+                     {'range': [lower_bound, upper_bound], 'color': "#2f2f2f",},],
                  'threshold' : {'line': {'color': "whitesmoke", 'width': 8}, 'thickness': 1, 'value': val}}
         ))
     fig.update_layout(margin_b=0)
