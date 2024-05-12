@@ -345,7 +345,6 @@ percentage_from_median[no_hang_cols] = percentage_from_median[no_hang_cols].map(
 percentage_from_median[hang_cols] *= 100
 
 polar = np.clip(percentage_from_median, -25, 25).melt()
-print(climber_dataframe.columns)
 
 with col1:
     metric = plot_prediction(v_grade, p_grade, "Entered Grade")
@@ -391,11 +390,11 @@ with col1:
     fig.update_layout(polar = dict(radialaxis = dict(visible = False, range=[-27, 27]), bgcolor = "#171c26"))
     fig.update_traces(fill='toself')
 
-    fig.update_layout(margin_b=5)
-    fig.update_layout(margin_l=40)
-    fig.update_layout(margin_r=40)
+    fig.update_layout(margin_b=1)
+    fig.update_layout(margin_l=45)
+    fig.update_layout(margin_r=45)
     fig.update_layout(margin_t=20)
-    fig.update_layout(height=400)
+    fig.update_layout(height=300)
     st.plotly_chart(fig, use_container_width=True, config = config)
 
     st.markdown("#### Model metrics")
@@ -423,7 +422,7 @@ with col1:
     fig.update_layout(margin_l=0)
     fig.update_layout(margin_r=0)
     fig.update_layout(margin_t=0)
-    fig.update_layout(height=370)
+    fig.update_layout(height=450)
     st.markdown("#### Model variable influence")
     st.plotly_chart(fig, use_container_width=True, config = config)
 
