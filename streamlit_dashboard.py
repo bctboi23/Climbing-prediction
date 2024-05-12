@@ -25,6 +25,11 @@ config = {'displayModeBar': False}
 
 # helper functions
 
+def convert_range(value, x_min = -3, x_max = 3):
+    y_min = -25
+    y_max = 25
+    return ((value - x_min) * (y_max - y_min) / (x_max - x_min)) + y_min
+
 def plot_strip(df, x, y, hue=None, reg_line=False):
     # plot our strip plot
     fig = plt.figure(figsize=(30, 10), facecolor='#0e1117').tight_layout()
@@ -248,6 +253,28 @@ similarity_feature_list = [
     "ape index"
 ]
 
+profile_array = np.array(
+    [
+       new_climber_dict["finger strength"],
+        new_climber_dict["weighted pull"],
+        new_climber_dict["experience"],
+        new_climber_dict["days"],
+        new_climber_dict["training experience"],
+    ]
+).reshape(1, -1)
+
+profile_feature_list = [
+    "Weighted hang ratio",
+    "Weighted pull ratio",
+    "years climbing",
+    "days outdoors",
+    "years training",
+]
+
+hang_cols = ['Weighted hang ratio', 'Weighted pull ratio']
+
+no_hang_cols = ['years climbing', 'days outdoors', 'years training']
+
 feature_names = [
     "height",
     "weight",
@@ -280,6 +307,8 @@ col1, col2, col3, col4 = st.columns((1, 1, 3.5, 3.5), gap='small')
 
 p_grade = model.predict(val_array)[0]
 v_grade = new_climber_dict["v grade"]
+lower_bound = v_grade - 1
+upper_bound = v_grade + 1
 
 # load
 with open('explainer.pkl', 'rb') as f:
@@ -304,6 +333,19 @@ bouldering_similarity_display = bouldering_clean_no_na.sort_values(by=['similari
 bouldering_similarity_display["sex"] = bouldering_similarity_display["sex"].replace([0, 1], sex_dict_map_display)
 bouldering_similarity_display["Weighted hang ratio"] *= 100
 bouldering_similarity_display["Weighted pull ratio"] *= 100
+
+v_grade_filter = (bouldering_clean["V Grade"] >= lower_bound) & (bouldering_clean["V Grade"] <= upper_bound)
+climber_profile = bouldering_clean[v_grade_filter][profile_feature_list]
+climber_dataframe = pd.DataFrame(profile_array, columns=profile_feature_list)
+means = climber_profile.mean()
+differences = climber_dataframe.sub(means)[profile_feature_list]
+
+percentage_from_median = differences
+percentage_from_median[no_hang_cols] = percentage_from_median[no_hang_cols].map(convert_range)
+percentage_from_median[hang_cols] *= 100
+
+polar = np.clip(percentage_from_median, -25, 25).melt()
+print(climber_dataframe.columns)
 
 with col1:
     metric = plot_prediction(v_grade, p_grade, "Entered Grade")
@@ -339,6 +381,23 @@ with col4:
 
 col1, col2 = st.columns((1, 3.5), gap='small')
 with col1:
+
+    st.markdown(f"#### Your profile")
+
+    small_col_names = ['fingers','pulling','experience',
+            'days outside', 'training']
+
+    fig = px.line_polar(polar, r='value', theta=small_col_names, line_close=True)
+    fig.update_layout(polar = dict(radialaxis = dict(visible = False, range=[-27, 27]), bgcolor = "#171c26"))
+    fig.update_traces(fill='toself')
+
+    fig.update_layout(margin_b=5)
+    fig.update_layout(margin_l=40)
+    fig.update_layout(margin_r=40)
+    fig.update_layout(margin_t=20)
+    fig.update_layout(height=400)
+    st.plotly_chart(fig, use_container_width=True, config = config)
+
     st.markdown("#### Model metrics")
     col11, col12, col13 = st.columns((1, 1, 1), gap='small')
     with col11:
@@ -364,21 +423,8 @@ with col1:
     fig.update_layout(margin_l=0)
     fig.update_layout(margin_r=0)
     fig.update_layout(margin_t=0)
-    fig.update_layout(height=300)
+    fig.update_layout(height=370)
     st.markdown("#### Model variable influence")
-    st.plotly_chart(fig, use_container_width=True, config = config)
-
-    st.markdown("#### Model Residuals")
-    fig = px.scatter(
-        residual_data, x='predicted y', y='residual error',
-        marginal_y='violin',
-        color='actual y'
-    )
-    fig.update_layout(margin_b=0)
-    fig.update_layout(margin_l=0)
-    fig.update_layout(margin_r=0)
-    fig.update_layout(margin_t=0)
-    fig.update_yaxes(range=[min(residual_data["residual error"]) - 0.1, max(residual_data["residual error"]) + 0.1])
     st.plotly_chart(fig, use_container_width=True, config = config)
 
 with col2:
